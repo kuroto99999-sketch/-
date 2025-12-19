@@ -1,459 +1,497 @@
-{\rtf1\ansi\ansicpg932\cocoartf2867
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Study Timer & Analytics</title>
+    
+    <!-- PWA / Mobile App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ポモドーロ">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fef2f2">
+    
+    <link rel="apple-touch-icon" href="https://fav.farm/🍅">
+    <link rel="icon" href="https://fav.farm/🍅">
 
-\f0\fs24 \cf0 <!DOCTYPE html>\
-<html lang="ja">\
-<head>\
-    <meta charset="UTF-8">\
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">\
-    <title>Study Timer & Analytics</title>\
-    \
-    <!-- PWA / Mobile App Meta Tags -->\
-    <meta name="apple-mobile-web-app-capable" content="yes">\
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">\
-    <meta name="apple-mobile-web-app-title" content="\uc0\u12509 \u12514 \u12489 \u12540 \u12525 ">\
-    <meta name="mobile-web-app-capable" content="yes">\
-    <meta name="theme-color" content="#fef2f2">\
-    \
-    <!-- App Icon (using a tomato emoji as fallback) -->\
-    <link rel="apple-touch-icon" href="https://fav.farm/\uc0\u55356 \u57157 ">\
-    <link rel="icon" href="https://fav.farm/\uc0\u55356 \u57157 ">\
-\
-    <!-- Web App Manifest (Data URL to keep it in a single file) -->\
-    <link rel="manifest" href="data:application/json,\{'name':'Study Timer','short_name':'StudyTimer','start_url':'.','display':'standalone','background_color':'#ffffff','theme_color':'#fef2f2'\}">\
-\
-    <script src="https://cdn.tailwindcss.com"></script>\
-    <style>\
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');\
-        \
-        body \{\
-            font-family: 'Inter', sans-serif;\
-            transition: background-color 0.5s ease;\
-            /* Prevents bouncing on mobile */\
-            overscroll-behavior-y: contain;\
-        \}\
-        \
-        .timer-font \{\
-            font-family: 'Inter', sans-serif;\
-            font-variant-numeric: tabular-nums;\
-            letter-spacing: -0.02em;\
-        \}\
-\
-        .mode-work \{ background-color: #fef2f2; \}\
-        .mode-short-break \{ background-color: #f0fdf4; \}\
-        .mode-long-break \{ background-color: #eff6ff; \}\
-\
-        .btn-shadow \{\
-            box-shadow: 0 4px 0 0 rgba(0,0,0,0.05);\
-        \}\
-        .btn-shadow:active \{\
-            transform: translateY(2px);\
-            box-shadow: none;\
-        \}\
-\
-        .progress-ring__circle \{\
-            transition: stroke-dashoffset 0.35s, stroke 0.5s ease;\
-            transform: rotate(-90deg);\
-            transform-origin: 50% 50%;\
-        \}\
-\
-        .calendar-day \{ aspect-ratio: 1 / 1; \}\
-        \
-        .intensity-0 \{ background-color: #f3f4f6; \}\
-        .intensity-1 \{ background-color: #fee2e2; \}\
-        .intensity-2 \{ background-color: #fca5a5; \}\
-        .intensity-3 \{ background-color: #ef4444; \}\
-        .intensity-4 \{ background-color: #b91c1c; \}\
-\
-        .modal-backdrop \{\
-            background-color: rgba(0, 0, 0, 0.4);\
-            backdrop-filter: blur(4px);\
-        \}\
-\
-        .no-scrollbar::-webkit-scrollbar \{ display: none; \}\
-        .no-scrollbar \{ -ms-overflow-style: none; scrollbar-width: none; \}\
-    </style>\
-</head>\
-<body class="mode-work min-h-screen flex items-center justify-center p-4 md:p-8">\
-\
-    <div class="max-w-7xl w-full flex flex-col lg:flex-row gap-8 items-stretch">\
-        \
-        <!-- Left Column: Timer Card -->\
-        <div class="flex-1 bg-white rounded-3xl shadow-2xl p-8 text-center border border-gray-100 flex flex-col">\
-            <!-- Tabs -->\
-            <div class="flex justify-between p-1 bg-gray-100 rounded-2xl mb-8">\
-                <button onclick="setMode('work')" id="tab-work" class="flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition-all bg-white shadow-sm text-red-600">\uc0\u21193 \u24375 </button>\
-                <button onclick="setMode('short')" id="tab-short" class="flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition-all text-gray-500">\uc0\u30701 \u20241 \u25001 </button>\
-                <button onclick="setMode('long')" id="tab-long" class="flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition-all text-gray-500">\uc0\u38263 \u20241 \u25001 </button>\
-            </div>\
-\
-            <!-- Main Timer Area -->\
-            <div class="flex-grow flex flex-col justify-center py-4">\
-                <div class="relative flex items-center justify-center mb-12">\
-                    <svg class="w-64 h-64 md:w-80 md:h-80" viewBox="0 0 320 320">\
-                        <circle class="text-gray-100" stroke-width="8" stroke="currentColor" fill="transparent" r="150" cx="160" cy="160" />\
-                        <circle id="progress-ring" class="text-red-500 progress-ring__circle" stroke-width="8" stroke-dasharray="942.48" stroke-dashoffset="0" stroke-linecap="round" stroke="currentColor" fill="transparent" r="150" cx="160" cy="160" />\
-                    </svg>\
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">\
-                        <span id="timer-display" class="timer-font text-7xl md:text-8xl font-extrabold text-gray-800 tracking-tight">25:00</span>\
-                        <span id="current-subject-display" class="text-gray-400 mt-2 font-bold tracking-widest uppercase text-xs">Ready to Study</span>\
-                    </div>\
-                </div>\
-\
-                <div class="flex gap-4 max-w-sm mx-auto w-full">\
-                    <button id="start-btn" onclick="handleStartClick()" class="flex-[2] py-4 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold text-lg transition-all btn-shadow uppercase">START</button>\
-                    <button onclick="resetTimer()" class="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl font-bold text-lg transition-all btn-shadow">RESET</button>\
-                </div>\
-            </div>\
-\
-            <!-- Bottom Stats -->\
-            <div class="pt-6 border-t border-gray-100 mt-8">\
-                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">\uc0\u20170 \u26085 \u12398 \u32047 \u35336 \u23398 \u32722 \u26178 \u38291 </div>\
-                <div id="total-study-time" class="text-3xl md:text-4xl font-extrabold text-gray-700 timer-font uppercase">00h 00m 00s</div>\
-            </div>\
-        </div>\
-\
-        <!-- Right Column: Analytics Card -->\
-        <div class="lg:w-[500px] bg-white rounded-3xl shadow-xl p-8 border border-gray-100 flex flex-col">\
-            <!-- Header -->\
-            <div class="flex items-center justify-between mb-8">\
-                <h2 class="text-xl font-bold text-gray-800">\uc0\u23398 \u32722 \u35352 \u37682 </h2>\
-                <div class="flex gap-2">\
-                    <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-colors">\
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>\
-                    </button>\
-                    <span id="calendar-month" class="font-bold text-gray-700 min-w-[100px] text-center">2023\uc0\u24180  10\u26376 </span>\
-                    <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-colors">\
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>\
-                    </button>\
-                </div>\
-            </div>\
-\
-            <!-- Scrollable Content -->\
-            <div class="flex-grow overflow-y-auto no-scrollbar">\
-                <div id="calendar-grid" class="grid grid-cols-7 gap-2 mb-8 text-center">\
-                    <!-- Days Injected Here -->\
-                </div>\
-\
-                <!-- Weekly Chart -->\
-                <div class="pt-8 border-t border-gray-100 mb-8">\
-                    <div class="flex justify-between items-end mb-6">\
-                        <h3 class="font-bold text-gray-700">\uc0\u36913 \u38291 \u25512 \u31227 </h3>\
-                        <span id="week-label" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Selected Week</span>\
-                    </div>\
-                    <div id="weekly-chart" class="flex items-end justify-between h-40 gap-2 px-2">\
-                        <!-- Bars Injected Here -->\
-                    </div>\
-                </div>\
-            </div>\
-\
-            <!-- Subject Button -->\
-            <div class="mt-8 pt-4 border-t border-gray-50">\
-                <button onclick="openManageModal()" class="w-full py-4 bg-gray-50 border border-gray-200 text-gray-600 rounded-2xl text-sm font-bold hover:bg-gray-100 transition-all flex items-center justify-center gap-2">\
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>\
-                    \uc0\u25945 \u31185 \u12434 \u36861 \u21152 \u12539 \u31649 \u29702 \
-                </button>\
-            </div>\
-        </div>\
-    </div>\
-\
-    <!-- Modals -->\
-    <div id="subject-modal" class="fixed inset-0 modal-backdrop z-[100] hidden flex items-center justify-center p-4">\
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 text-center scale-95 transition-transform">\
-            <h3 class="text-2xl font-extrabold text-gray-800 mb-6">\uc0\u20309 \u12434 \u21193 \u24375 \u12375 \u12414 \u12377 \u12363 \u65311 </h3>\
-            <div id="modal-subject-list" class="grid gap-3 mb-8 max-h-[40vh] overflow-y-auto pr-2"></div>\
-            <button onclick="closeModal('subject-modal')" class="text-gray-400 font-bold text-sm hover:text-gray-600">\uc0\u12461 \u12515 \u12531 \u12475 \u12523 </button>\
-        </div>\
-    </div>\
-\
-    <div id="manage-modal" class="fixed inset-0 modal-backdrop z-[100] hidden flex items-center justify-center p-4">\
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 text-center scale-95 transition-transform">\
-            <h3 class="text-2xl font-extrabold text-gray-800 mb-6">\uc0\u25945 \u31185 \u12398 \u31649 \u29702 </h3>\
-            <div id="subject-list-container" class="flex flex-wrap gap-2 mb-6 justify-center max-h-[30vh] overflow-y-auto"></div>\
-            <div class="flex gap-2 mb-8">\
-                <input type="text" id="new-subject-input" placeholder="\uc0\u26032 \u12375 \u12356 \u25945 \u31185 \u21517 " class="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-200">\
-                <button onclick="addSubject()" class="px-6 py-3 bg-gray-800 text-white rounded-xl text-sm font-bold hover:bg-gray-700 transition-colors">\uc0\u36861 \u21152 </button>\
-            </div>\
-            <button onclick="closeModal('manage-modal')" class="w-full py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-all">\uc0\u23436 \u20102 </button>\
-        </div>\
-    </div>\
-\
-    <!-- Toast -->\
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-[110]">\
-        \uc0\u26178 \u38291 \u12395 \u12394 \u12426 \u12414 \u12375 \u12383 \u65281 \
-    </div>\
-\
-    <script>\
-        // Service Worker registration (Single-file fallback)\
-        if ('serviceWorker' in navigator) \{\
-            const swCode = "self.addEventListener('fetch', function(e) \{ /* Service Worker Placeholder */ \});";\
-            const blob = new Blob([swCode], \{type: 'application/javascript'\});\
-            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => \{\});\
-        \}\
-\
-        // State & Data\
-        let timeLeft = 25 * 60;\
-        let timerId = null;\
-        let currentMode = 'work';\
-        let totalTime = 25 * 60;\
-        let viewDate = new Date();\
-        let selectedDate = new Date();\
-        let currentSubject = null;\
-        let history = JSON.parse(localStorage.getItem('study_history_v3') || '\{\}');\
-        let subjects = JSON.parse(localStorage.getItem('study_subjects') || '["\uc0\u25968 \u23398 ", "\u33521 \u35486 ", "\u22269 \u35486 ", "\u29702 \u31185 ", "\u31038 \u20250 "]');\
-        const subjectColors = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4"];\
-\
-        // UI Elements\
-        const display = document.getElementById('timer-display');\
-        const startBtn = document.getElementById('start-btn');\
-        const progressRing = document.getElementById('progress-ring');\
-        const subjectModal = document.getElementById('subject-modal');\
-        const manageModal = document.getElementById('manage-modal');\
-        const modalSubjectList = document.getElementById('modal-subject-list');\
-        const subjectListContainer = document.getElementById('subject-list-container');\
-        const calendarGrid = document.getElementById('calendar-grid');\
-        const weeklyChart = document.getElementById('weekly-chart');\
-\
-        const modes = \{\
-            work: \{ time: 25 * 60, color: 'text-red-500', bg: 'mode-work', btn: 'bg-red-500', btnHover: 'hover:bg-red-600', tabColor: 'text-red-600', label: 'Study Time' \},\
-            short: \{ time: 5 * 60, color: 'text-green-500', bg: 'mode-short-break', btn: 'bg-green-500', btnHover: 'hover:bg-green-600', tabColor: 'text-green-600', label: 'Take a Break' \},\
-            long: \{ time: 15 * 60, color: 'text-blue-500', bg: 'mode-long-break', btn: 'bg-blue-500', btnHover: 'hover:bg-blue-600', tabColor: 'text-blue-600', label: 'Long Rest' \}\
-        \};\
-\
-        function formatDate(date) \{\
-            return `$\{date.getFullYear()\}-$\{(date.getMonth() + 1).toString().padStart(2, '0')\}-$\{date.getDate().toString().padStart(2, '0')\}`;\
-        \}\
-\
-        function formatFullTime(sec) \{\
-            const h = Math.floor(sec / 3600);\
-            const m = Math.floor((sec % 3600) / 60);\
-            const s = sec % 60;\
-            return `$\{h.toString().padStart(2, '0')\}h $\{m.toString().padStart(2, '0')\}m $\{s.toString().padStart(2, '0')\}s`;\
-        \}\
-\
-        function renderManageSubjects() \{\
-            subjectListContainer.innerHTML = '';\
-            subjects.forEach((s, i) => \{\
-                const color = subjectColors[i % subjectColors.length];\
-                const tag = document.createElement('div');\
-                tag.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm';\
-                tag.style.backgroundColor = color;\
-                tag.innerHTML = `<span>$\{s\}</span><button onclick="removeSubject('$\{s\}')" class="hover:text-black opacity-60 hover:opacity-100 transition-opacity">\uc0\u10005 </button>`;\
-                subjectListContainer.appendChild(tag);\
-            \});\
-        \}\
-\
-        function addSubject() \{\
-            const input = document.getElementById('new-subject-input');\
-            const val = input.value.trim();\
-            if (val && !subjects.includes(val)) \{\
-                subjects.push(val);\
-                localStorage.setItem('study_subjects', JSON.stringify(subjects));\
-                input.value = '';\
-                renderManageSubjects();\
-            \}\
-        \}\
-\
-        function removeSubject(sub) \{\
-            subjects = subjects.filter(s => s !== sub);\
-            localStorage.setItem('study_subjects', JSON.stringify(subjects));\
-            renderManageSubjects();\
-        \}\
-\
-        function openManageModal() \{ renderManageSubjects(); manageModal.classList.remove('hidden'); \}\
-        function closeModal(id) \{ document.getElementById(id).classList.add('hidden'); \}\
-\
-        function handleStartClick() \{\
-            if (timerId) pauseTimer();\
-            else if (currentMode === 'work') openSubjectSelection();\
-            else startTimer();\
-        \}\
-\
-        function openSubjectSelection() \{\
-            modalSubjectList.innerHTML = '';\
-            subjects.forEach((s, i) => \{\
-                const color = subjectColors[i % subjectColors.length];\
-                const btn = document.createElement('button');\
-                btn.className = 'w-full py-4 px-6 rounded-2xl font-bold text-white transition-transform active:scale-95 shadow-lg';\
-                btn.style.backgroundColor = color;\
-                btn.textContent = s;\
-                btn.onclick = () => \{ currentSubject = s; closeModal('subject-modal'); startTimer(); \};\
-                modalSubjectList.appendChild(btn);\
-            \});\
-            subjectModal.classList.remove('hidden');\
-        \}\
-\
-        function startTimer() \{\
-            if (timerId) return;\
-            startBtn.textContent = 'PAUSE';\
-            document.getElementById('current-subject-display').textContent = currentSubject || modes[currentMode].label;\
-            timerId = setInterval(() => \{\
-                timeLeft--;\
-                if (currentMode === 'work' && currentSubject) \{\
-                    const key = formatDate(new Date());\
-                    if (!history[key]) history[key] = \{\};\
-                    history[key][currentSubject] = (history[key][currentSubject] || 0) + 1;\
-                    if (timeLeft % 10 === 0) saveData();\
-                    updateStatsUI();\
-                \}\
-                updateDisplay();\
-                if (timeLeft <= 0) handleTimerComplete();\
-            \}, 1000);\
-        \}\
-\
-        function pauseTimer() \{\
-            clearInterval(timerId);\
-            timerId = null;\
-            startBtn.textContent = 'START';\
-            saveData();\
-            updateStatsUI();\
-        \}\
-\
-        function handleTimerComplete() \{ pauseTimer(); showToast(); \}\
-        function saveData() \{ localStorage.setItem('study_history_v3', JSON.stringify(history)); \}\
-        function resetTimer() \{\
-            pauseTimer();\
-            timeLeft = totalTime;\
-            currentSubject = null;\
-            document.getElementById('current-subject-display').textContent = modes[currentMode].label;\
-            updateDisplay();\
-        \}\
-\
-        function renderCalendar() \{\
-            const year = viewDate.getFullYear();\
-            const month = viewDate.getMonth();\
-            document.getElementById('calendar-month').textContent = `$\{year\}\uc0\u24180  $\{month + 1\}\u26376 `;\
-            const firstDay = new Date(year, month, 1).getDay();\
-            const daysInMonth = new Date(year, month + 1, 0).getDate();\
-            calendarGrid.innerHTML = '\uc0\u26085 ,\u26376 ,\u28779 ,\u27700 ,\u26408 ,\u37329 ,\u22303 '.split(',').map(d => `<div class="text-[10px] font-bold text-gray-400 uppercase">$\{d\}</div>`).join('');\
-            for (let i = 0; i < firstDay; i++) calendarGrid.appendChild(document.createElement('div'));\
-            for (let day = 1; day <= daysInMonth; day++) \{\
-                const dateObj = new Date(year, month, day);\
-                const key = formatDate(dateObj);\
-                const dayData = history[key] || \{\};\
-                const total = Object.values(dayData).reduce((a, b) => a + b, 0);\
-                const dayEl = document.createElement('button');\
-                dayEl.onclick = () => \{ selectedDate = new Date(year, month, day); renderCalendar(); renderWeeklyChart(); \};\
-                let intensity = 0;\
-                if (total > 0) intensity = 1;\
-                if (total > 3600) intensity = 2;\
-                if (total > 7200) intensity = 3;\
-                if (total > 14400) intensity = 4;\
-                const isToday = key === formatDate(new Date());\
-                const isSelected = key === formatDate(selectedDate);\
-                dayEl.className = `calendar-day w-full flex items-center justify-center text-[10px] font-bold rounded-lg transition-all border intensity-$\{intensity\} $\{intensity > 2 ? 'text-white' : 'text-gray-600'\} $\{isSelected ? 'ring-2 ring-blue-400 border-white z-10' : 'border-transparent'\} $\{isToday && !isSelected ? 'ring-2 ring-red-300' : ''\}`;\
-                dayEl.textContent = day;\
-                calendarGrid.appendChild(dayEl);\
-            \}\
-        \}\
-\
-        function renderWeeklyChart() \{\
-            const date = new Date(selectedDate);\
-            const day = date.getDay();\
-            const diff = date.getDate() - day + (day === 0 ? -6 : 1); \
-            const monday = new Date(date.setDate(diff));\
-            weeklyChart.innerHTML = '';\
-            document.getElementById('week-label').textContent = `$\{monday.getMonth()+1\}/$\{monday.getDate()\} \uc0\u12316 `;\
-            let maxDaily = 3600; \
-            const weekKeys = [];\
-            for (let i = 0; i < 7; i++) \{\
-                const d = new Date(monday);\
-                d.setDate(monday.getDate() + i);\
-                const key = formatDate(d);\
-                weekKeys.push(key);\
-                const total = Object.values(history[key] || \{\}).reduce((a, b) => a + b, 0);\
-                if (total > maxDaily) maxDaily = total;\
-            \}\
-            weekKeys.forEach((key, idx) => \{\
-                const dayData = history[key] || \{\};\
-                const total = Object.values(dayData).reduce((a, b) => a + b, 0);\
-                const barContainer = document.createElement('div');\
-                barContainer.className = 'flex-1 flex flex-col items-center group relative';\
-                const barWrapper = document.createElement('div');\
-                barWrapper.className = 'w-full bg-gray-100 rounded-t-sm overflow-hidden flex flex-col-reverse';\
-                barWrapper.style.height = `$\{(total / maxDaily) * 100\}%`;\
-                barWrapper.style.minHeight = total > 0 ? '4px' : '0';\
-                Object.entries(dayData).forEach(([sub, sec]) => \{\
-                    const segment = document.createElement('div');\
-                    const colorIdx = subjects.indexOf(sub);\
-                    segment.style.backgroundColor = subjectColors[colorIdx % subjectColors.length] || '#ccc';\
-                    segment.style.height = `$\{(sec / total) * 100\}%`;\
-                    barWrapper.appendChild(segment);\
-                \});\
-                const label = document.createElement('span');\
-                label.className = 'text-[8px] font-bold text-gray-400 mt-2 uppercase';\
-                label.textContent = '\uc0\u26376 \u28779 \u27700 \u26408 \u37329 \u22303 \u26085 '[idx];\
-                const tooltip = document.createElement('div');\
-                tooltip.className = 'absolute bottom-full mb-2 bg-gray-800 text-white text-[10px] p-2 rounded hidden group-hover:block z-20 whitespace-nowrap pointer-events-none shadow-xl';\
-                let content = `<div class="font-bold border-b border-gray-600 mb-1 pb-1">$\{key\}</div>`;\
-                if (total === 0) content += '\uc0\u35352 \u37682 \u12394 \u12375 ';\
-                else Object.entries(dayData).forEach(([s, sec]) => \{ content += `<div class="flex justify-between gap-4"><span>$\{s\}</span><span>$\{Math.floor(sec/60)\}m</span></div>`; \});\
-                tooltip.innerHTML = content;\
-                barContainer.appendChild(tooltip);\
-                barContainer.appendChild(barWrapper);\
-                barContainer.appendChild(label);\
-                weeklyChart.appendChild(barContainer);\
-            \});\
-        \}\
-\
-        function updateStatsUI() \{\
-            const todayKey = formatDate(new Date());\
-            const totalSec = Object.values(history[todayKey] || \{\}).reduce((a, b) => a + b, 0);\
-            document.getElementById('total-study-time').textContent = formatFullTime(totalSec);\
-            renderWeeklyChart();\
-        \}\
-\
-        function updateDisplay() \{\
-            const minutes = Math.floor(timeLeft / 60);\
-            const seconds = timeLeft % 60;\
-            display.textContent = `$\{minutes.toString().padStart(2, '0')\}:$\{seconds.toString().padStart(2, '0')\}`;\
-            const circumference = 2 * Math.PI * 150;\
-            const offset = circumference - (timeLeft / totalTime) * circumference;\
-            progressRing.style.strokeDashoffset = offset;\
-            document.title = `$\{display.textContent\} - Study Timer`;\
-        \}\
-\
-        function setMode(mode) \{\
-            currentMode = mode;\
-            totalTime = modes[mode].time;\
-            timeLeft = totalTime;\
-            currentSubject = null;\
-            document.body.className = `min-h-screen flex items-center justify-center p-4 md:p-8 $\{modes[mode].bg\}`;\
-            progressRing.setAttribute('class', `progress-ring__circle $\{modes[mode].color\}`);\
-            startBtn.className = `flex-[2] py-4 $\{modes[mode].btn\} $\{modes[mode].btnHover\} text-white rounded-2xl font-bold text-lg transition-all btn-shadow uppercase`;\
-            document.getElementById('current-subject-display').textContent = modes[mode].label;\
-            ['work', 'short', 'long'].forEach(m => \{\
-                const tab = document.getElementById(`tab-$\{m\}`);\
-                if (m === mode) \{\
-                    tab.className = `flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition-all bg-white shadow-sm $\{modes[mode].tabColor\}`;\
-                \} else \{\
-                    tab.className = `flex-1 py-2 px-4 rounded-xl text-sm font-semibold transition-all text-gray-500 hover:text-gray-700`;\
-                \}\
-            \});\
-            pauseTimer();\
-            updateDisplay();\
-        \}\
-\
-        function changeMonth(offset) \{ viewDate.setMonth(viewDate.getMonth() + offset); renderCalendar(); \}\
-        function showToast() \{\
-            toast.classList.remove('translate-y-20', 'opacity-0');\
-            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 4000);\
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();\
-            const osc = ctx.createOscillator();\
-            const gain = ctx.createGain();\
-            osc.connect(gain); gain.connect(ctx.destination);\
-            osc.frequency.setValueAtTime(880, ctx.currentTime);\
-            gain.gain.setValueAtTime(0.1, ctx.currentTime);\
-            osc.start(); osc.stop(ctx.currentTime + 0.5);\
-        \}\
-\
-        renderCalendar();\
-        updateStatsUI();\
-        updateDisplay();\
-    </script>\
-</body>\
-</html>}
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="data:application/json,{'name':'Study Timer','short_name':'StudyTimer','start_url':'.','display':'standalone','background_color':'#ffffff','theme_color':'#fef2f2'}">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        
+        :root {
+            --theme-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease;
+            overscroll-behavior-y: contain;
+            height: 100dvh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .timer-font {
+            font-family: 'Inter', sans-serif;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        .mode-work { background-color: #fef2f2; --theme-color: #ef4444; }
+        .mode-short-break { background-color: #f0fdf4; --theme-color: #22c55e; }
+        .mode-long-break { background-color: #eff6ff; --theme-color: #3b82f6; }
+
+        .btn-shadow {
+            box-shadow: 0 4px 0 0 rgba(0,0,0,0.05);
+        }
+        .btn-shadow:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s, stroke 0.5s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .calendar-day { aspect-ratio: 1 / 1; }
+        
+        .intensity-0 { background-color: #f3f4f6; }
+        .intensity-1 { background-color: #fee2e2; }
+        .intensity-2 { background-color: #fca5a5; }
+        .intensity-3 { background-color: #ef4444; }
+        .intensity-4 { background-color: #b91c1c; }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .view-content {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+            width: 100%;
+        }
+        .view-content.active {
+            display: flex;
+        }
+
+        /* 横画面でのボタン押しやすさ調整 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .timer-svg-container {
+                height: 45vh !important;
+                width: 45vh !important;
+                margin-bottom: 0 !important;
+            }
+            #timer-display { font-size: 3.5rem !important; }
+            .mode-tabs { margin-bottom: 0.5rem !important; }
+            .controls-container { flex-direction: row !important; gap: 0.75rem !important; }
+            .stats-container { display: none; }
+            main { padding-top: 0.5rem !important; }
+        }
+
+        .nav-active {
+            background-color: var(--theme-color) !important;
+            color: white !important;
+        }
+
+        /* デスクトップ時：横並び */
+        @media (min-width: 1024px) {
+            body { overflow: auto; height: auto; min-h-screen; }
+            .view-content { display: flex !important; height: auto; }
+            #mobile-nav { display: none; }
+            main { flex-direction: row !important; height: auto; overflow: visible; align-items: start; }
+            #timer-view { flex: 1; position: sticky; top: 2rem; }
+            #analytics-view { width: 500px; }
+        }
+    </style>
+</head>
+<body class="mode-work">
+
+    <!-- メイン -->
+    <main class="flex-grow max-w-7xl w-full mx-auto flex flex-col gap-6 p-4 md:p-8 pb-28 overflow-hidden lg:pb-8">
+        
+        <!-- タイマー画面 -->
+        <div id="timer-view" class="view-content active bg-white rounded-3xl shadow-2xl p-6 border border-gray-100 flex-col overflow-hidden">
+            <div class="flex justify-between p-1 bg-gray-100 rounded-2xl mb-6 flex-shrink-0">
+                <button onclick="setMode('work')" id="tab-work" class="flex-1 py-2 px-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-white shadow-sm text-red-600">勉強</button>
+                <button onclick="setMode('short')" id="tab-short" class="flex-1 py-2 px-2 rounded-xl text-xs md:text-sm font-semibold transition-all text-gray-500">短休憩</button>
+                <button onclick="setMode('long')" id="tab-long" class="flex-1 py-2 px-2 rounded-xl text-xs md:text-sm font-semibold transition-all text-gray-500">長休憩</button>
+            </div>
+
+            <div class="flex-grow flex flex-col justify-center items-center overflow-hidden py-4">
+                <div class="timer-svg-container relative flex items-center justify-center mb-8 w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
+                    <svg class="w-full h-full" viewBox="0 0 320 320">
+                        <circle class="text-gray-100" stroke-width="8" stroke="currentColor" fill="transparent" r="150" cx="160" cy="160" />
+                        <circle id="progress-ring" class="text-red-500 progress-ring__circle" stroke-width="8" stroke-dasharray="942.48" stroke-dashoffset="0" stroke-linecap="round" stroke="currentColor" fill="transparent" r="150" cx="160" cy="160" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="timer-display" class="timer-font text-6xl md:text-8xl font-extrabold text-gray-800 tracking-tight leading-none">25:00</span>
+                        <span id="current-subject-display" class="text-gray-400 mt-2 font-bold tracking-widest uppercase text-[10px] md:text-xs">Ready to Study</span>
+                    </div>
+                </div>
+
+                <div class="controls-container flex gap-4 max-w-sm mx-auto w-full flex-shrink-0">
+                    <button id="start-btn" onclick="handleStartClick()" class="flex-[2] py-4 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-bold text-lg transition-all btn-shadow uppercase">START</button>
+                    <button onclick="resetTimer()" class="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl font-bold text-lg transition-all btn-shadow uppercase">RESET</button>
+                </div>
+            </div>
+
+            <div class="stats-container pt-6 border-t border-gray-100 mt-4 flex-shrink-0">
+                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">今日の累計学習時間</div>
+                <div id="total-study-time" class="text-2xl md:text-3xl font-extrabold text-gray-700 timer-font uppercase leading-none">00h 00m 00s</div>
+            </div>
+        </div>
+
+        <!-- 記録画面 -->
+        <div id="analytics-view" class="view-content bg-white rounded-3xl shadow-xl p-6 border border-gray-100 flex-col overflow-hidden">
+            <div class="flex items-center justify-between mb-6 flex-shrink-0">
+                <h2 class="text-lg md:text-xl font-bold text-gray-800">学習記録</h2>
+                <div class="flex gap-2 text-[var(--theme-color)] transition-colors">
+                    <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-100 rounded-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+                    <span id="calendar-month" class="font-bold text-gray-700 min-w-[100px] text-center text-sm pt-1">2023年 10月</span>
+                    <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-100 rounded-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                </div>
+            </div>
+
+            <div class="flex-grow overflow-y-auto no-scrollbar pr-1">
+                <div id="calendar-grid" class="grid grid-cols-7 gap-2 mb-6 text-center"></div>
+
+                <div class="pt-6 border-t border-gray-100 mb-6">
+                    <div class="flex justify-between items-end mb-4">
+                        <h3 class="text-sm font-bold text-gray-700">週間推移</h3>
+                        <span id="week-label" class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Selected Week</span>
+                    </div>
+                    <div id="weekly-chart" class="flex items-end justify-between h-32 md:h-40 gap-1 md:gap-2 px-1"></div>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-50 flex-shrink-0">
+                <button onclick="openManageModal()" class="w-full py-3 bg-gray-50 border border-gray-200 text-gray-600 rounded-2xl text-xs font-bold hover:bg-gray-100 transition-all flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    教科を追加・管理
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ナビゲーションバー -->
+    <nav id="mobile-nav" class="fixed bottom-0 left-0 w-full pb-8 pt-4 px-4 flex justify-center bg-transparent pointer-events-none z-[90]">
+        <div class="bg-white/90 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl p-1.5 flex gap-1 pointer-events-auto">
+            <button onclick="switchView('timer')" id="nav-timer" class="nav-active flex items-center gap-2 px-8 py-3 rounded-2xl text-sm font-bold transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                タイマー
+            </button>
+            <button onclick="switchView('analytics')" id="nav-analytics" class="flex items-center gap-2 px-8 py-3 rounded-2xl text-sm font-bold transition-all text-gray-500 hover:bg-gray-100">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                記録
+            </button>
+        </div>
+    </nav>
+
+    <!-- モーダル・トースト -->
+    <div id="subject-modal" class="fixed inset-0 modal-backdrop z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 text-center scale-95 transition-transform">
+            <h3 class="text-2xl font-extrabold text-gray-800 mb-6">何を勉強しますか？</h3>
+            <div id="modal-subject-list" class="grid gap-3 mb-8 max-h-[40vh] overflow-y-auto pr-2 no-scrollbar"></div>
+            <button onclick="closeModal('subject-modal')" class="text-gray-400 font-bold text-sm hover:text-gray-600">キャンセル</button>
+        </div>
+    </div>
+
+    <div id="manage-modal" class="fixed inset-0 modal-backdrop z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 text-center scale-95 transition-transform">
+            <h3 class="text-2xl font-extrabold text-gray-800 mb-6">教科の管理</h3>
+            <div id="subject-list-container" class="flex flex-wrap gap-2 mb-6 justify-center max-h-[30vh] overflow-y-auto no-scrollbar"></div>
+            <div class="flex gap-2 mb-8">
+                <input type="text" id="new-subject-input" placeholder="教科名" class="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-200">
+                <button onclick="addSubject()" class="px-6 py-3 bg-gray-800 text-white rounded-xl text-sm font-bold hover:bg-gray-700 transition-colors">追加</button>
+            </div>
+            <button onclick="closeModal('manage-modal')" class="w-full py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-all">完了</button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg transform -translate-y-20 opacity-0 transition-all duration-300 z-[110]">
+        時間になりました！
+    </div>
+
+    <script>
+        // --- 1. ユーティリティ関数 ---
+        function formatDate(date) {
+            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        }
+
+        function formatFullTime(sec) {
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            return `${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+        }
+
+        // --- 2. 状態管理 ---
+        let timeLeft = 25 * 60, timerId = null, currentMode = 'work', totalTime = 25 * 60;
+        let viewDate = new Date(), selectedDate = new Date(), currentSubject = null, currentView = 'timer';
+        let history = JSON.parse(localStorage.getItem('study_history_v3') || '{}');
+        let subjects = JSON.parse(localStorage.getItem('study_subjects') || '["数学", "英語", "国語", "理科", "社会"]');
+        const subjectColors = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4"];
+
+        const modes = {
+            work: { time: 25 * 60, color: 'text-red-500', bg: 'mode-work', btn: 'bg-red-500', btnHover: 'hover:bg-red-600', tabColor: 'text-red-600', label: 'Study Time' },
+            short: { time: 5 * 60, color: 'text-green-500', bg: 'mode-short-break', btn: 'bg-green-500', btnHover: 'hover:bg-green-600', tabColor: 'text-green-600', label: 'Take a Break' },
+            long: { time: 15 * 60, color: 'text-blue-500', bg: 'mode-long-break', btn: 'bg-blue-500', btnHover: 'hover:bg-blue-600', tabColor: 'text-blue-600', label: 'Long Rest' }
+        };
+
+        // --- 3. 表示切り替え ---
+        function switchView(view) {
+            currentView = view;
+            const timerV = document.getElementById('timer-view');
+            const analyticsV = document.getElementById('analytics-view');
+            const navT = document.getElementById('nav-timer');
+            const navA = document.getElementById('nav-analytics');
+
+            if (view === 'timer') {
+                timerV.classList.add('active');
+                analyticsV.classList.remove('active');
+                navT.classList.add('nav-active');
+                navT.classList.remove('text-gray-500');
+                navA.classList.remove('nav-active');
+                navA.classList.add('text-gray-500');
+            } else {
+                analyticsV.classList.add('active');
+                timerV.classList.remove('active');
+                navA.classList.add('nav-active');
+                navA.classList.remove('text-gray-500');
+                navT.classList.remove('nav-active');
+                navT.classList.add('text-gray-500');
+                renderCalendar();
+                renderWeeklyChart();
+            }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            totalTime = modes[mode].time;
+            timeLeft = totalTime;
+            currentSubject = null;
+            document.body.className = `min-h-screen flex flex-col items-center justify-center ${modes[mode].bg}`;
+            document.getElementById('progress-ring').setAttribute('class', `progress-ring__circle ${modes[mode].color}`);
+            document.getElementById('start-btn').className = `flex-[2] py-4 ${modes[mode].btn} ${modes[mode].btnHover} text-white rounded-2xl font-bold text-lg transition-all btn-shadow uppercase`;
+            document.getElementById('current-subject-display').textContent = modes[mode].label;
+            
+            // ナビのアクティブ色も更新
+            const activeNav = document.querySelector('.nav-active');
+            if (activeNav) activeNav.style.backgroundColor = getComputedStyle(document.body).getPropertyValue('--theme-color');
+
+            ['work', 'short', 'long'].forEach(m => {
+                const tab = document.getElementById(`tab-${m}`);
+                tab.className = m === mode ? `flex-1 py-2 px-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-white shadow-sm ${modes[mode].tabColor}` : `flex-1 py-2 px-2 rounded-xl text-xs md:text-sm font-semibold transition-all text-gray-500 hover:text-gray-700`;
+            });
+
+            pauseTimer();
+            updateDisplay();
+        }
+
+        // --- 4. タイマー制御 ---
+        function handleStartClick() {
+            if (timerId) pauseTimer();
+            else if (currentMode === 'work') openSubjectSelection();
+            else startTimer();
+        }
+
+        function openSubjectSelection() {
+            const list = document.getElementById('modal-subject-list');
+            list.innerHTML = '';
+            subjects.forEach((s, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full py-4 px-6 rounded-2xl font-bold text-white transition-transform active:scale-95 shadow-lg';
+                btn.style.backgroundColor = subjectColors[i % subjectColors.length];
+                btn.textContent = s;
+                btn.onclick = () => { currentSubject = s; closeModal('subject-modal'); startTimer(); };
+                list.appendChild(btn);
+            });
+            document.getElementById('subject-modal').classList.remove('hidden');
+        }
+
+        function startTimer() {
+            if (timerId) return;
+            document.getElementById('start-btn').textContent = 'PAUSE';
+            document.getElementById('current-subject-display').textContent = currentSubject || modes[currentMode].label;
+            timerId = setInterval(() => {
+                timeLeft--;
+                if (currentMode === 'work' && currentSubject) {
+                    const key = formatDate(new Date());
+                    if (!history[key]) history[key] = {};
+                    history[key][currentSubject] = (history[key][currentSubject] || 0) + 1;
+                    if (timeLeft % 10 === 0) saveData();
+                    updateStatsUI();
+                }
+                updateDisplay();
+                if (timeLeft <= 0) handleTimerComplete();
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            document.getElementById('start-btn').textContent = 'START';
+            saveData();
+            updateStatsUI();
+        }
+
+        function handleTimerComplete() { pauseTimer(); showToast(); }
+        function saveData() { localStorage.setItem('study_history_v3', JSON.stringify(history)); }
+        function resetTimer() {
+            pauseTimer();
+            timeLeft = totalTime;
+            currentSubject = null;
+            document.getElementById('current-subject-display').textContent = modes[currentMode].label;
+            updateDisplay();
+        }
+
+        // --- 5. カレンダー・分析 ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            if (!grid) return;
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            document.getElementById('calendar-month').textContent = `${year}年 ${month + 1}月`;
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            grid.innerHTML = '日,月,火,水,木,金,土'.split(',').map(d => `<div class="text-[10px] font-bold text-gray-400 uppercase">${d}</div>`).join('');
+            for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateObj = new Date(year, month, day), key = formatDate(dateObj);
+                const total = Object.values(history[key] || {}).reduce((a, b) => a + b, 0);
+                const dayEl = document.createElement('button');
+                dayEl.onclick = () => { selectedDate = new Date(year, month, day); renderCalendar(); renderWeeklyChart(); };
+                let intensity = 0;
+                if (total > 0) intensity = 1;
+                if (total > 3600) intensity = 2;
+                if (total > 7200) intensity = 3;
+                if (total > 14400) intensity = 4;
+                const isSelected = key === formatDate(selectedDate);
+                dayEl.className = `calendar-day w-full flex items-center justify-center text-[10px] font-bold rounded-lg transition-all border intensity-${intensity} ${intensity > 2 ? 'text-white' : 'text-gray-600'} ${isSelected ? 'ring-2 ring-blue-400 border-white z-10' : 'border-transparent'}`;
+                dayEl.textContent = day;
+                grid.appendChild(dayEl);
+            }
+        }
+
+        function renderWeeklyChart() {
+            const chart = document.getElementById('weekly-chart');
+            if (!chart) return;
+            const date = new Date(selectedDate);
+            const day = date.getDay();
+            const monday = new Date(date.setDate(date.getDate() - day + (day === 0 ? -6 : 1)));
+            chart.innerHTML = '';
+            document.getElementById('week-label').textContent = `${monday.getMonth()+1}/${monday.getDate()} 〜`;
+            let maxDaily = 3600; 
+            const weekKeys = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday); d.setDate(monday.getDate() + i);
+                const key = formatDate(d); weekKeys.push(key);
+                const total = Object.values(history[key] || {}).reduce((a, b) => a + b, 0);
+                if (total > maxDaily) maxDaily = total;
+            }
+            weekKeys.forEach((key, idx) => {
+                const dayData = history[key] || {}, total = Object.values(dayData).reduce((a, b) => a + b, 0);
+                const container = document.createElement('div');
+                container.className = 'flex-1 flex flex-col items-center group relative';
+                const wrapper = document.createElement('div');
+                wrapper.className = 'w-full bg-gray-100 rounded-t-sm overflow-hidden flex flex-col-reverse';
+                wrapper.style.height = `${(total / maxDaily) * 100}%`;
+                Object.entries(dayData).forEach(([sub, sec]) => {
+                    const segment = document.createElement('div');
+                    segment.style.backgroundColor = subjectColors[subjects.indexOf(sub) % subjectColors.length] || '#ccc';
+                    segment.style.height = `${(sec / total) * 100}%`;
+                    wrapper.appendChild(segment);
+                });
+                const label = document.createElement('span');
+                label.className = 'text-[8px] font-bold text-gray-400 mt-2 uppercase';
+                label.textContent = '月火水木金土日'[idx];
+                container.append(wrapper, label);
+                chart.appendChild(container);
+            });
+        }
+
+        function updateStatsUI() {
+            const key = formatDate(new Date());
+            const sec = Object.values(history[key] || {}).reduce((a, b) => a + b, 0);
+            document.getElementById('total-study-time').textContent = formatFullTime(sec);
+            if (currentView === 'analytics') renderWeeklyChart();
+        }
+
+        function updateDisplay() {
+            const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            document.getElementById('timer-display').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            const circumference = 2 * Math.PI * 150;
+            document.getElementById('progress-ring').style.strokeDashoffset = circumference - (timeLeft / totalTime) * circumference;
+            document.title = `${document.getElementById('timer-display').textContent} - Timer`;
+        }
+
+        function changeMonth(offset) { viewDate.setMonth(viewDate.getMonth() + offset); renderCalendar(); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openManageModal() { renderManageSubjects(); document.getElementById('manage-modal').classList.remove('hidden'); }
+        
+        function renderManageSubjects() {
+            const cont = document.getElementById('subject-list-container');
+            cont.innerHTML = '';
+            subjects.forEach((s, i) => {
+                const tag = document.createElement('div');
+                tag.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm';
+                tag.style.backgroundColor = subjectColors[i % subjectColors.length];
+                tag.innerHTML = `<span>${s}</span><button onclick="removeSubject('${s}')" class="p-1 hover:text-black">✕</button>`;
+                cont.appendChild(tag);
+            });
+        }
+
+        function addSubject() {
+            const input = document.getElementById('new-subject-input');
+            const val = input.value.trim();
+            if (val && !subjects.includes(val)) {
+                subjects.push(val); localStorage.setItem('study_subjects', JSON.stringify(subjects));
+                input.value = ''; renderManageSubjects();
+            }
+        }
+
+        function removeSubject(sub) {
+            subjects = subjects.filter(s => s !== sub);
+            localStorage.setItem('study_subjects', JSON.stringify(subjects));
+            renderManageSubjects();
+        }
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.classList.remove('-translate-y-20', 'opacity-0');
+            t.classList.add('translate-y-0');
+            setTimeout(() => { t.classList.remove('translate-y-0'); t.classList.add('-translate-y-20', 'opacity-0'); }, 4000);
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            osc.start(); osc.stop(ctx.currentTime + 0.5);
+        }
+
+        // --- 初期起動 ---
+        renderCalendar();
+        updateStatsUI();
+        updateDisplay();
+        
+        // PWA用のService Worker
+        if ('serviceWorker' in navigator) {
+            const blob = new Blob(["self.addEventListener('fetch', function(e){})"], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+        }
+    </script>
+</body>
+</html>
